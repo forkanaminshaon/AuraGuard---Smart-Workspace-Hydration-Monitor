@@ -1,4 +1,4 @@
-# AuraGuard — Smart Workspace & Hydration Monitor
+# AuraGuard - Smart Workspace & Hydration Monitor
 
 AuraGuard is a **real-time computer vision application** designed to reduce digital distractions and promote healthy work habits. Using a webcam and a lightweight YOLO object detection model, AuraGuard monitors desk activity and provides instant visual feedback when the user becomes distracted by their phone or forgets to stay hydrated.
 
