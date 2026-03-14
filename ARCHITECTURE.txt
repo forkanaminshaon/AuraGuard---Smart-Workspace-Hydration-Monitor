@@ -1,0 +1,208 @@
+===========================================================================
+PROJECT: AuraGuard — Smart Workspace & Hydration Monitor System
+VERSION: 1.0.0
+AUTHOR: Forkan Amin Shaon
+FIELD: Computer Vision / Productivity AI
+===========================================================================
+
+
+1. OVERVIEW
+-----------
+AuraGuard is a real-time computer vision application designed to reduce
+digital distractions and monitor user well-being in a workspace environment.
+The system uses a webcam and a lightweight YOLOv11 object detection model
+to detect key objects such as a smartphone, bottle, and cup.
+
+By applying temporal logic to object detections, AuraGuard can determine
+how long a user has been distracted by their phone and how long it has
+been since they last interacted with a drinking vessel.
+o
+All processing runs locally, ensuring privacy and minimal latency.
+
+
+2. SYSTEM ARCHITECTURE
+----------------------
+
+    [DATA INPUT]
+          │
+          ▼
+    Webcam Stream (OpenCV VideoCapture)
+          │
+          ▼
+    [FRAME PRE-PROCESSING]
+          │
+          ├─ Resize Frame
+          ├─ Normalize Pixel Values
+          └─ Convert Format for Model
+          │
+          ▼
+    [INFERENCE ENGINE]
+          │
+          └─ YOLOv11n Object Detection
+             (COCO Pretrained Model)
+          │
+          ▼
+    [OBJECT FILTERING LAYER]
+          │
+          └─ Keep Only Relevant Classes
+             - Cell Phone
+             - Bottle
+             - Cup
+          │
+          ▼
+    [TEMPORAL LOGIC ENGINE]
+          │
+          ├─ Phone Distraction Timer
+          ├─ Hydration Timer
+          └─ State Tracking
+          │
+          ▼
+    [HUD RENDERING]
+          │
+          └─ OpenCV Overlay
+             - Bounding Boxes
+             - Alerts
+             - Timer Display
+          │
+          ▼
+    Real-Time Video Display
+
+
+3. KEY COMPONENTS
+-----------------
+
+A. OBJECT DETECTION ENGINE (The "Brain")
+
+   Model: Ultralytics YOLOv11n (Nano Variant)
+
+   Features:
+   - Pre-trained on COCO dataset
+   - Lightweight architecture
+   - Optimized for real-time inference
+
+   Detected Classes:
+
+   Cell Phone   → Class ID 67  
+   Bottle       → Class ID 39  
+   Cup          → Class ID 41
+
+
+B. OBJECT FILTERING LAYER
+
+   Purpose:
+   Reduces computational overhead and false detections by ignoring
+   irrelevant classes.
+
+   Implementation:
+   - Confidence Threshold: 0.50
+   - Only selected class IDs are processed further.
+
+   Benefits:
+   - Faster processing
+   - Cleaner detection pipeline
+   - Lower CPU usage
+
+
+C. TEMPORAL STATE MACHINE (Behavior Logic)
+
+   AuraGuard tracks object presence over time instead of analyzing
+   each frame independently.
+
+   Two behavioral states are monitored:
+
+
+   1. Distraction State
+
+   Trigger:
+   Continuous phone detection.
+
+   Formula:
+   Distraction_Time = Current_Time − Phone_First_Detected_Time
+
+   Alert Condition:
+   If Distraction_Time > 2 seconds
+   → Display RED distraction warning
+
+
+   2. Hydration State
+
+   Trigger:
+   Bottle or cup visible.
+
+   Formula:
+   Hydration_Time = Current_Time − Last_Drink_Detected_Time
+
+   Alert Condition:
+   If Hydration_Time > 30 seconds
+   → Display BLUE hydration reminder
+
+
+4. LOGIC FLOW (PSEUDOCODE)
+--------------------------
+
+WHILE Camera is Active:
+
+    Capture Frame from Webcam
+
+    Run YOLO Object Detection
+
+    FOR each detected object:
+
+        IF object == 'cell phone':
+            Start or Update Phone_Timer
+
+        IF object == 'bottle' OR object == 'cup':
+            Reset Hydration_Timer
+
+    Evaluate System States:
+
+        IF Phone_Timer > 2 seconds:
+            Display RED distraction alert
+
+        IF Current_Time - Hydration_Timer > 30 seconds:
+            Display BLUE hydration reminder
+
+    Render Bounding Boxes and HUD
+
+    Display Frame
+
+
+5. PERFORMANCE METRICS
+----------------------
+
+Expected Performance (Standard Laptop):
+
+Latency per Frame:        ~15–30 ms
+Average Frame Rate:       ~25–30 FPS
+Memory Usage:             Low (Nano model)
+Model Size:               ~6–10 MB
+
+These metrics allow AuraGuard to operate in real-time without GPU
+acceleration.
+
+
+6. FUTURE SCALABILITY
+---------------------
+
+AuraGuard can be extended with additional AI modules:
+
+• Pose Estimation
+  Detect slouching or poor posture using MediaPipe.
+
+• Eye Strain Detection
+  Monitor blink rate and eye closure patterns.
+
+• Productivity Analytics
+  Log distraction and hydration events.
+
+• Data Storage
+  Export session statistics to CSV or SQL database.
+
+• Data Science Integration
+  Use Applied Statistics to analyze productivity patterns
+  and visualize trends in weekly reports.
+
+===========================================================================
+
+END OF DOCUMENT
+===========================================================================

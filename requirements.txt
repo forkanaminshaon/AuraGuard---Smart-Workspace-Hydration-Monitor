@@ -1,0 +1,15 @@
+# =========================================================
+# AuraGuard — Smart Workspace & Hydration Monitor
+# Requirements File
+# Author: Forkan Amin Shaon
+# =========================================================
+
+# --- Core Computer Vision & AI ---
+ultralytics>=8.3.0      # YOLOv11 object detection framework
+opencv-python>=4.8.0    # Real-time webcam capture and HUD rendering
+
+# --- Data Processing ---
+numpy>=1.24.0           # Numerical operations and frame processing
+
+# --- Development Utilities ---
+ipython                 # Helpful for debugging / running in Jupyter
